@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f8f8f8;
+        color: black;
+        padding: 20px;
+        transition: background-color 0.5s, color 0.5s;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .night-mode .tab {
+        background-color: white !important;
+        color: black !important;
+    }
+
+    .digital-clock-container {
+        display: inline-block;
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        background-color: #f0f0f0;
+        margin-left: 20px;
+    }
+
+    .night-mode .digital-clock-container {
+        background-color: #444;
+    }
+
+    .digital-clock {
+        font-size: 24px;
+        transition: color 0.5s;
+    }
+
+    .night-mode .digital-clock {
+        color: white;
+    }
+
+    h1 {
+        font-size: 36px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .input-container {
+        position: relative;
+        margin-bottom: 25px;
+    }
+
+    .input-container input,
+    .input-container select,
+    .input-container textarea {
+        width: 100%;
+        padding: 15px;
+        font-size: 16px;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .input-container label {
+        position: absolute;
+        left: 15px;
+        top: 15px;
+        font-size: 16px;
+        color: #777;
+        transition: all 0.3s;
+        pointer-events: none;
+        padding: 0 5px;
+        border-radius: 15px;
+    }
+
+    .input-container input:focus,
+    .input-container select:focus,
+    .input-container textarea:focus {
+        border-color: #ccc;
+        box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+        outline: none;
+    }
+
+    .input-container input:focus + label,
+    .input-container select:focus + label,
+    .input-container textarea:focus + label,
+    .input-container input:not(:placeholder-shown) + label,
+    .input-container select:not(:placeholder-shown) + label,
+    .input-container textarea:not(:placeholder-shown) + label {
+        top: -10px;
+        left: 10px;
+        font-size: 14px;
+        background-color: #fff;
+        padding: 0 8px;
+        border-radius: 15px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+
+    button {
+        padding: 10px 20px;
+        font-size: 16px;
+        margin-top: 10px;
+        border: none;
+        border-radius: 8px;
+        background-color: #4caf50;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.1s;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .container-hover-effect {
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Keyframes for circling animation */
+    @keyframes circleHover {
+        0% {
+            box-shadow: 0 0 0px rgba(0, 0, 0, 0);
+        }
+        25% {
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 0, 0, 0.4);
+        }
+        50% {
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.4), 0 0 40px rgba(0, 0, 0, 0.6);
+        }
+        75% {
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.6), 0 0 60px rgba(0, 0, 0, 0.8);
+        }
+        100% {
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.8), 0 0 80px rgba(0, 0, 0, 1);
+        }
+    }
+
+    /* Circling line animation */
+    @keyframes circleLine {
+        0% {
+            border: 2px solid rgba(0, 0, 0, 0);
+        }
+        50% {
+            border: 2px solid rgba(0, 0, 0, 0.5);
+        }
+        100% {
+            border: 2px solid rgba(0, 0, 0, 1);
+        }
+    }
+
+    /* Apply animation to tabs */
+    .tab:hover, .tab:focus {
+        animation: circleLine 0.8s forwards;
+    }
+
+    /* Apply animation to buttons */
+    button:hover, button:focus {
+        animation: circleLine 0.8s forwards;
+    }
+
+    /* Apply animation to input fields */
+    .input-container input:hover, .input-container input:focus,
+    .input-container select:hover, .input-container select:focus,
+    .input-container textarea:hover, .input-container textarea:focus {
+        animation: circleLine 0.8s forwards;
+    }
+
+    button:hover {
+        background-color: #45a049;
+        transform: translateY(-2px);
+    }
+
+    button:active {
+        transform: translateY(0);
+    }
+
+    .toggle-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .toggle {
+        position: relative;
+        width: 60px;
+        height: 30px;
+        margin-left: 10px;
+    }
+
+    .toggle input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        border-radius: 30px;
+        transition: background-color 0.4s;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 2px;
+        bottom: 2px;
+        background-color: white;
+        border-radius: 50%;
+        transition: transform 0.4s;
+    }
+
+    input:checked + .slider {
+        background-color: #4caf50;
+    }
+
+    input:checked + .slider:before {
+        transform: translateX(30px);
+    }
+
+    .logo {
+        width: 40px;
+        height: auto;
+        margin-left: 10px;
+    }
+
+    .night-mode {
+        background-color: #333;
+        color: #fff;
+    }
+
+    .tab {
+        display: inline-block;
+        padding: 10px 20px;
+        cursor: pointer;
+        background-color: #4caf50;
+        color: white;
+        border-radius: 8px 8px 0 0;
+        margin-right: 5px;
+        transition: background-color 0.3s;
+    }
+
+    .tab.active {
+        background-color: black;
+        color: white;
+    }
+
+    .night-mode .tab.active {
+        background-color: white;
+        color: black;
+    }
+
+    .tab-content {
+        display: none;
+        padding: 20px;
+        border: 2px solid #4caf50;
+        border-radius: 0 8px 8px 8px;
+        margin-top: -2px;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    .digital-clock {
+        font-size: 24px;
+        margin-left: 20px;
+        transition: color 0.5s;
+    }
+
+    .saved-notes-container {
+        margin-top: 20px;
+    }
+
+    .delete-button, .edit-button, .copy-button {
+        padding: 5px 10px;
+        font-size: 14px;
+        margin-left: 10px;
+    }
+
+    .delete-button {
+        background-color: #f44336;
+    }
+
+    .delete-button:hover {
+        background-color: #d32f2f;
+    }
+
+    .edit-button {
+        background-color: #2196F3;
+    }
+
+    .edit-button:hover {
+        background-color: #1976D2;
+    }
+
+    .copy-button {
+        background-color: #FFA500;
+    }
+
+    .copy-button:hover {
+        background-color: #FF8C00;
+    }
+
+    #editNoteModal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 10% auto;
+        padding: 30px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 600px;
+        border-radius: 8px;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        transition: color 0.3s;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    #timezoneSelect {
+        font-size: 14px;
+        padding: 5px;
+        margin-left: 10px;
+        border-radius: 5px;
+    }
+
+    .header-container {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .night-mode-toggle {
+        text-align: center;
+    }
+
+    .night-mode-toggle label {
+        display: block;
+        margin-bottom: 5px;
+        color: inherit;
+    }
+
+    .saved-note {
+        background-color: #f1f1f1;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        color: black;
+    }
+
+    .night-mode .saved-note {
+        background-color: #444;
+        color: white;
+    }
+
+    .saved-note-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .saved-note-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .bulk-actions {
+        margin-bottom: 20px;
+    }
+
+    #searchInput {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        margin-bottom: 20px;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+    }
+
+    .search-result {
+        background-color: #e9e9e9;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 8px;
+    }
+
+    /* Glass effect styles */
+    .glass-container {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(10px);
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        padding: 20px;
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    }
+
+    /* Contact Directory dropdown styles */
+    #myDropdown {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        font-size: 16px;
+    }
+
+    #resultTextbox {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        font-size: 16px;
+        background-color: #f0f0f0;
+    }
+</style>
+</head>
+
+<body>
+    <h1>Notes Template</h1>
+
+    <div class="header-container">
+        <div class="toggle-container">
+            <label for="nightMode">Night Mode</label>
+            <label class="toggle">
+                <input type="checkbox" id="nightMode" onclick="toggleNightMode()">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="digital-clock-container">
+            <div class="digital-clock" id="digitalClock">00:00:00 AM</div>
+        </div>
+        <select id="timezoneSelect" onchange="updateTimezone()">
+            <option value="UTC">UTC</option>
+            <option value="America/New_York">America/New_York</option>
+            <option value="America/Los_Angeles">America/Los_Angeles</option>
+            <option value="America/Chicago">America/Chicago</option>
+            <option value="America/Denver">America/Denver</option>
+            <option value="Europe/London">Europe/London</option>
+            <option value="Europe/Paris">Europe/Paris</option>
+            <option value="Asia/Tokyo">Asia/Tokyo</option>
+            <option value="Asia/Shanghai">Asia/Shanghai</option>
+            <option value="Australia/Sydney">Australia/Sydney</option>
+            <option value="Pacific/Auckland">Pacific/Auckland</option>
+        </select>
+        <img src="https://static.vecteezy.com/system/resources/previews/009/607/553/non_2x/jrz-circle-letter-logo-design-with-circle-and-ellipse-shape-jrz-ellipse-letters-with-typographic-style-the-three-initials-form-a-circle-logo-jrz-circle-emblem-abstract-monogram-letter-mark-vector.jpg" alt="Logo" class="logo">
+    </div>
+
+    <div>
+        <span class="tab active" onclick="switchTab('notesTab')">Inbound</span>
+        <span class="tab" onclick="switchTab('outboundTab')">Outbound</span>
+        <span class="tab" onclick="switchTab('t2TemplateTab')">T2 Template</span>
+        <span class="tab" onclick="switchTab('savedNotesTab')">Saved Notes</span>
+    </div>
+    <div id="outboundTab" class="tab-content">
+        <form id="outboundForm" class="glass-container">
+            <div class="input-container">
+                <input type="text" id="outboundContactName" placeholder=" " required>
+                <label for="outboundContactName">Contact Name called</label>
+            </div>
+
+            <div class="input-container">
+                <input type="text" id="outboundContactPhone" placeholder=" " required>
+                <label for="outboundContactPhone">Contact Phone Number Dialed</label>
+            </div>
+
+            <div class="input-container">
+                <input type="email" id="outboundEmail" placeholder=" " required>
+                <label for="outboundEmail">Contact Email Address</label>
+            </div>
+
+            <div class="input-container">
+                <input type="text" id="vccTransId" placeholder=" " required>
+                <label for="vccTransId">VCC Trans ID</label>
+            </div>
+
+            <div class="input-container">
+                <textarea id="outboundUpdate" rows="5" placeholder=" " required></textarea>
+                <label for="outboundUpdate">Update/Troubleshooting</label>
+            </div>
+
+            <div class="button-container">
+                <button type="button" onclick="copyOutboundData()">Copy</button>
+                <button type="button" onclick="resetOutboundForm()">Reset Form</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function switchTab(tabId) {
+            const tabs = document.querySelectorAll(".tab-content");
+            tabs.forEach(tab => {
+                tab.classList.remove("active");
+            });
+            document.getElementById(tabId).classList.add("active");
+
+            const tabButtons = document.querySelectorAll(".tab");
+            tabButtons.forEach(button => {
+                button.classList.remove("active");
+            });
+            const activeButton = Array.from(tabButtons).find(button => button.textContent === tabId.replace('Tab', ''));
+            activeButton.classList.add("active");
+        }
+
+        function copyOutboundData() {
+            const contactName = document.getElementById("outboundContactName").value;
+            const contactPhone = document.getElementById("outboundContactPhone").value;
+            const email = document.getElementById("outboundEmail").value;
+            const vccTransId = document.getElementById("vccTransId").value;
+            const update = document.getElementById("outboundUpdate").value;
+
+            const outboundData = `Contact Name called: ${contactName}\nContact Phone Number Dialed: ${contactPhone}\nContact Email Address: ${email}\nVCC Trans ID: ${vccTransId}\nUpdate/Troubleshooting: ${update}`;
+
+            navigator.clipboard.writeText(outboundData).then(() => {
+                alert("Outbound data copied to clipboard!");
+            }, () => {
+                alert("Failed to copy outbound data. Please try again.");
+            });
+        }
+
+        function resetOutboundForm() {
+            document.getElementById("outboundForm").reset();
+        }
+    </script>
+
+    <div id="notesTab" class="tab-content active">
+        <form id="notesForm" class="glass-container">
+            <!-- Add Contact Directory dropdown -->
+            <div class="input-container">
+                <label for="myDropdown"> </label>
+                <select id="myDropdown" onchange="showSelectedValue()">
+                    <option value="">Contact Directory</option>
+                    <option value="C4334410">Sales Master Case</option>
+                    <option value="+44 207 096 6060">8x8 Support UK</option>
+                    <option value="+44 333 043 8888">8x8 Sales UK</option>
+                    <option value="+1 866-879-8647">8x8 Sales US</option>
+                    <option value="+1 888-898-8733">Main 8x8 Customer Support</option>
+                    <option value="+1 800-890-1553">Main IVR for Fuze Support</option>
+                    <option value="+1 866-379-9442">Main IVR for Fuze Support (direct)</option>
+                    <option value="+1 669-299-2781">Customer Care Premium</option>
+                    <option value="+1 669-268-0538">Tier 1 Premium</option>
+                    <option value="+1 408-775-7439">Enterprise Tech Support</option>
+                    <option value="+1 669-900-5556">Tier 2 Support</option>
+                    <option value="+1 408-675-5141">LNP Internal Transfer</option>
+                    <option value="+1 805-754-3342">Tier 1 Billing</option>
+                    <option value="+1 408-956-6055">Enterprise Billing</option>
+                    <option value="+1-669-900-5539">Global Cancellations</option>
+                </select>
+            </div>
+            <div class="input-container">
+                <input type="text" id="resultTextbox" readonly>
+            </div>
+
+            <div class="input-container">
+                <input type="text" id="mcn" name="MCN or Case ID" placeholder=" " required>
+                <label for="mcn">MCN or Case ID</label>
+            </div>
+
+            <div class="input-container">
+                <input type="text" id="transactionId" name="Transaction ID" placeholder=" " required>
+                <label for="transactionId">Transaction ID</label>
+            </div>
+
+            <div class="input-container">
+                <input type="text" id="contactName" name="Contact Name" placeholder=" " required>
+                <label for="contactName">Contact Name</label>
+            </div>
+
+            <div class="input-container">
+                <input type="text" id="email" name="Email Address" placeholder=" " required>
+                <label for="email">Email Address</label>
+            </div>
+
+            <div class="input-container">
+                <input type="text" id="callBackNumber" name="Call Back Number" placeholder=" " required>
+                <label for="callBackNumber">Call Back Number</label>
+            </div>
+
+            <div class="input-container">
+                <select id="passphraseVerification" name="Security Passphrase Verification Needed" required>
+                    <option value="" disabled selected></option>
+                    <option value="Yes">Yes</option>
+                    <option value="Yes">Yes w/ OTP</option>
+                    <option value="No">No</option>
+                    <option value="N/A">N/A</option>
+                </select>
+                <label for="passphraseVerification">Security Passphrase Verification Needed</label>
+            </div>
+
+            <div class="input-container">
+                <select id="passphraseVerified" name="Security Passphrase Verified" required>
+                    <option value="" disabled selected></option>
+                    <option value="Yes">Yes</option>
+                    <option value="Yes">Yes w/ OTP</option>
+                    <option value="No">No</option>
+                    <option value="N/A">N/A</option>
+                </select>
+                <label for="passphraseVerified">Security Passphrase Verified</label>
+            </div>
+
+            <div class="input-container">
+                <input type="text" id="pbx" name="PBX" placeholder=" " required>
+                <label for="pbx">PBX</label>
+            </div>
+
+            <div class="input-container">
+                <input type="text" id="symptom" name="Symptom" placeholder=" " required>
+                <label for="symptom">Symptom</label>
+            </div>
+
+            <div class="input-container">
+                <input type="text" id="issue" name="Issue" placeholder=" " required>
+                <label for="issue">Issue</label>
+            </div>
+
+            <div class="input-container">
+                <input type="text" id="resolution" name="Resolution" placeholder=" " required>
+                <label for="resolution">Resolution</label>
+            </div>
+
+            <div class="input-container">
+                <textarea id="troubleshootingSteps" name="Troubleshooting Steps" rows="5" placeholder=" " required></textarea>
+                <label for="troubleshootingSteps">Troubleshooting Steps</label>
+            </div>
+
+            <div class="button-container">
+                <button type="button" onclick="copyNote()">Copy</button>
+                <button type="button" onclick="resetForm()">Reset Form</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="t2TemplateTab" class="tab-content">
+        <form id="t2Form" class="glass-container">
+            <div class="input-container">
+                <input type="text" id="parentAccount" name="Parent Account" placeholder=" " required>
+                <label for="parentAccount">Parent Account</label>
+            </div>
+
+            <div class="input-container">
+                <input type="text" id="pbxName" name="PBX Name" placeholder=" " required>
+                <label for="pbxName">PBX Name</label>
+            </div>
+
+            <div class="input-container">
+                <input type="text" id="t2ContactName" name="Contact Name" placeholder=" " required>
+                <label for="t2ContactName">Contact Name</label>
+            </div>
+
+            <div  class="input-container">
+                <input type="text" id="t2CallBackNumber" name="Call Back Number" placeholder=" " required>
+                <label for="t2CallBackNumber">Call Back Number</label>
+            </div>
+
+            <div class="input-container">
+                <input type="text" id="t2Email" name="Email Address" placeholder=" " required>
+                <label for="t2Email">Email Address</label>
+            </div>
+
+            <div class="input-container">
+                <input type="text" id="contactTimeZone" name="Contact Time Zone" placeholder=" " required>
+                <label for="contactTimeZone">Contact Time Zone</label>
+            </div>
+
+            <div class="input-container">
+                <input type="text" id="leadApproval" name="Lead Approval" placeholder=" " required>
+                <label for="leadApproval">Lead Approval</label>
+            </div>
+
+            <div class="input-container">
+                <input type="text" id="t2Symptom" name="Symptom" placeholder=" " required>
+                <label for="t2Symptom">Symptom</label>
+            </div>
+
+            <div class="input-container">
+                <input type="text" id="t2Issue" name="Issue" placeholder=" " required>
+                <label for="t2Issue">Issue</label>
+            </div>
+
+            <div class="input-container">
+                <input type="text" id="t2Resolution" name="Resolution" placeholder=" " required>
+                <label for="t2Resolution">Resolution</label>
+            </div>
+
+            <div class="input-container">
+                <input type="text" id="canReplicate" name="Can the agent replicate the issue?" placeholder=" " required>
+                <label for="canReplicate">Can the agent replicate the issue?</label>
+            </div>
+
+            <div class="input-container">
+                <textarea id="t2TroubleshootingSteps" name="Troubleshooting Steps" rows="5" placeholder=" " required></textarea>
+                <label for="t2TroubleshootingSteps">Troubleshooting Steps</label>
+            </div>
+
+            <div class="input-container">
+                <input type="text" id="kbArticles" name="Knowledge Base article(s) consulted (URL)" placeholder=" ">
+                <label for="kbArticles">Knowledge Base article(s) consulted (URL)</label>
+            </div>
+
+            <div class="input-container">
+                <input type="text" id="loginInfo" name="Login Info (UID)(For VO Mobile, Desktop, or Online issues)" placeholder=" ">
+                <label for="loginInfo">Login Info (UID)(For VO Mobile, Desktop, or Online issues)</label>
+            </div>
+
+            <div class="button-container">
+                <button type="button" onclick="copyT2()">Copy</button>
+                <button type="button" onclick="resetT2Form()">Reset Form</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="savedNotesTab" class="tab-content">
+        <h2>Saved Notes</h2>
+        <div class="bulk-actions">
+            <button onclick="deleteSelectedNotes()">Delete Selected</button>
+        </div>
+        <div id="savedNotes"></div>
+
+        <h2>Search Saved Notes</h2>
+        <input type="text" id="searchInput" placeholder="Search notes..." oninput="searchNotes()">
+        <div id="searchResults"></div>
+    </div>
+
+    <div id="editNoteModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Edit Note</h2>
+            <form id="editNoteForm">
+                <input type="hidden" id="editNoteIndex">
+                <div class="input-container">
+                    <input type="text" id="editMcn" placeholder=" " required>
+                    <label for="editMcn">MCN or Case ID</label>
+                </div>
+                <div class="input-container">
+                    <input type="text" id="editTransactionId" placeholder=" " required>
+                    <label for="editTransactionId">Transaction ID</label>
+                </div>
+                <div class="input-container">
+                    <input type="text" id="editContactName" placeholder=" " required>
+                    <label for="editContactName">Contact Name</label>
+                </div>
+                <div class="input-container">
+                    <input type="text" id="editEmail" placeholder=" " required>
+                    <label for="editEmail">Email Address</label>
+                </div>
+                <div class="input-container">
+                    <input type="text" id="editCallBackNumber" placeholder=" " required>
+                    <label for="editCallBackNumber">Call Back Number</label>
+                </div>
+                <div class="input-container">
+                    <select id="editPassphraseVerification" required>
+                        <option value="" disabled selected></option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                        <option value="N/A">N/A</option>
+                    </select>
+                    <label for="editPassphraseVerification">Security Passphrase Verification Needed</label>
+                </div>
+                <div class="input-container">
+                    <select id="editPassphraseVerified" required>
+                        <option value="" disabled selected></option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                        <option value="N/A">N/A</option>
+                    </select>
+                    <label for="editPassphraseVerified">Security Passphrase Verified</label>
+                </div>
+                <div class="input-container">
+                    <input type="text" id="editPbx" placeholder=" " required>
+                    <label for="editPbx">PBX</label>
+                </div>
+                <div class="input-container">
+                    <input type="text" id="editSymptom" placeholder=" " required>
+                    <label for="editSymptom">Symptom</label>
+                </div>
+                <div class="input-container">
+                    <input type="text" id="editIssue" placeholder=" " required>
+                    <label for="editIssue">Issue</label>
+                </div>
+                <div class="input-container">
+                    <input type="text" id="editResolution" placeholder=" " required>
+                    <label for="editResolution">Resolution</label>
+                </div>
+                <div class="input-container">
+                    <textarea id="editTroubleshootingSteps" rows="5" placeholder=" " required></textarea>
+                    <label for="editTroubleshootingSteps">Troubleshooting Steps</label>
+                </div>
+                <button type="submit">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentTimezone = 'UTC';
+
+        function toggleNightMode() {
+            document.body.classList.toggle("night-mode");
+        }
+
+        function switchTab(tabId) {
+            const tabs = document.querySelectorAll(".tab-content");
+            tabs.forEach(tab => {
+                tab.classList.remove("active");
+            });
+            const selectedTab = document.getElementById(tabId);
+            selectedTab.classList.add("active");
+
+            const tabButtons = document.querySelectorAll(".tab");
+            tabButtons.forEach(button => {
+                button.classList.remove("active");
+            });
+            const activeButton = Array.from(tabButtons).find(button => button.textContent === tabId.replace('Tab', ''));
+            activeButton.classList.add("active");
+
+            if (tabId === 'savedNotesTab') {
+                displaySavedNotes();
+            }
+        }
+
+        function copyNote() {
+            const mcn = document.getElementById("mcn").value;
+            const transactionId = document.getElementById("transactionId").value;
+            const contactName = document.getElementById("contactName").value;
+            const email = document.getElementById("email").value;
+            const callBackNumber = document.getElementById("callBackNumber").value;
+            const passphraseVerification = document.getElementById("passphraseVerification").value;
+            const passphraseVerified = document.getElementById("passphraseVerified").value;
+            const pbx = document.getElementById("pbx").value;
+            const symptom = document.getElementById("symptom").value;
+            const issue = document.getElementById("issue").value;
+            const resolution = document.getElementById("resolution").value;
+            const troubleshootingSteps = document.getElementById("troubleshootingSteps").value;
+
+            if (mcn) {
+                const note = {
+                    mcn,
+                    transactionId,
+                    contactName,
+                    email,
+                    callBackNumber,
+                    passphraseVerification,
+                    passphraseVerified,
+                    pbx,
+                    symptom,
+                    issue,
+                    resolution,
+                    troubleshootingSteps,
+                    timestamp: new Date().toLocaleString()
+                };
+
+                const savedNotes = JSON.parse(localStorage.getItem("notes")) || [];
+                const existingNoteIndex = savedNotes.findIndex(n => n.mcn === mcn);
+
+                if (existingNoteIndex !== -1) {
+                    savedNotes[existingNoteIndex] = note;
+                } else {
+                    savedNotes.push(note);
+                }
+
+                localStorage.setItem("notes", JSON.stringify(savedNotes));
+
+                const noteText = `MCN or Case ID: ${mcn}
+Transaction ID: ${transactionId}
+Contact Name: ${contactName}
+Email Address: ${email}
+Call Back Number: ${callBackNumber}
+Security Passphrase Verification Needed: ${passphraseVerification}
+Security Passphrase Verified: ${passphraseVerified}
+PBX: ${pbx}
+Symptom: ${symptom}
+Issue: ${issue}
+Resolution: ${resolution}
+Troubleshooting Steps: ${troubleshootingSteps}`;
+
+                navigator.clipboard.writeText(noteText).then(() => {
+                    alert("Note copied to clipboard and saved!");
+                }, () => {
+                    alert("Note saved, but failed to copy. Please try again.");
+                });
+
+                displaySavedNotes();
+            }
+        }
+
+        function copyT2() {
+            const parentAccount = document.getElementById("parentAccount").value;
+            const pbxName = document.getElementById("pbxName").value;
+            const contactName = document.getElementById("t2ContactName").value;
+            const callBackNumber = document.getElementById("t2CallBackNumber").value;
+            const email = document.getElementById("t2Email").value;
+            const contactTimeZone = document.getElementById("contactTimeZone").value;
+            const leadApproval = document.getElementById("leadApproval").value;
+            const symptom = document.getElementById("t2Symptom").value;
+            const issue = document.getElementById("t2Issue").value;
+            const resolution = document.getElementById("t2Resolution").value;
+            const canReplicate = document.getElementById("canReplicate").value;
+            const troubleshootingSteps = document.getElementById("t2TroubleshootingSteps").value;
+            const kbArticles = document.getElementById("kbArticles").value;
+            const loginInfo = document.getElementById("loginInfo").value;
+
+            const t2Text = `Parent Account: ${parentAccount}
+PBX Name: ${pbxName}
+Contact Name: ${contactName}
+Call Back Number: ${callBackNumber}
+Email Address: ${email}
+Contact Time Zone: ${contactTimeZone}
+Lead Approval: ${leadApproval}
+Symptom: ${symptom}
+Issue: ${issue}
+Resolution: ${resolution}
+Can the agent replicate the issue?: ${canReplicate}
+Troubleshooting Steps: ${troubleshootingSteps}
+Knowledge Base article(s) consulted (URL): ${kbArticles}
+Login Info (UID)(For VO Mobile, Desktop, or Online issues): ${loginInfo}`;
+
+            navigator.clipboard.writeText(t2Text).then(() => {
+                alert("T2 Template copied to clipboard!");
+            }, () => {
+                alert("Failed to copy T2 Template. Please try again.");
+            });
+        }
+
+        function displaySavedNotes() {
+            const savedNotes = JSON.parse(localStorage.getItem("notes")) || [];
+            const savedNotesContainer = document.getElementById("savedNotes");
+            savedNotesContainer.innerHTML = savedNotes.map((note, index) => `
+                <div class="saved-note">
+                    <div class="saved-note-header">
+                        <input type="checkbox" class="note-checkbox" data-index="${index}">
+                        <strong>MCN: ${note.mcn}</strong>
+                        <span>Timestamp: ${note.timestamp}</span>
+                    </div>
+                    <div class="saved-note-actions">
+                        <button onclick="editNote(${index})" class="edit-button">Edit</button>
+                        <button onclick="deleteNote(${index})" class="delete-button">Delete</button>
+                        <button onclick="copyNoteToClipboard(${index})" class="copy-button">Copy</button>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function searchNotes() {
+            const searchTerm = document.getElementById("searchInput").value.toLowerCase();
+            const savedNotes = JSON.parse(localStorage.getItem("notes")) || [];
+            const searchResults = savedNotes.filter(note =>
+                note.mcn.toLowerCase().includes(searchTerm) ||
+                note.transactionId.toLowerCase().includes(searchTerm) ||
+                note.contactName.toLowerCase().includes(searchTerm) ||
+                note.email.toLowerCase().includes(searchTerm) ||
+                note.callBackNumber.toLowerCase().includes(searchTerm) ||
+                note.symptom.toLowerCase().includes(searchTerm) ||
+                note.issue.toLowerCase().includes(searchTerm) ||
+                note.resolution.toLowerCase().includes(searchTerm) ||
+                note.troubleshootingSteps.toLowerCase().includes(searchTerm)
+            );
+
+            const searchResultsContainer = document.getElementById("searchResults");
+            searchResultsContainer.innerHTML = searchResults.length > 0
+                ? searchResults.map((note, index) => `
+                    <div class="search-result">
+                        <strong>MCN: ${note.mcn}</strong>
+                        <span>Timestamp: ${note.timestamp}</span>
+                        <button onclick="editNote(${savedNotes.findIndex(n => n.mcn === note.mcn)})" class="edit-button">Edit</button>
+                    </div>
+                `).join("")
+                : "<div>No matching notes found.</div>";
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const options = { timeZone: currentTimezone, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+            const formattedTime = now.toLocaleTimeString('en-US', options);
+            const clockElement = document.getElementById("digitalClock");
+            clockElement.textContent = formattedTime;
+            clockElement.style.color = `hsl(${now.getSeconds() * 6}, 70%, 50%)`;
+        }
+
+        function updateTimezone() {
+            currentTimezone = document.getElementById("timezoneSelect").value;
+        }
+
+        function deleteNote(index) {
+            const savedNotes = JSON.parse(localStorage.getItem("notes")) || [];
+            savedNotes.splice(index, 1);
+            localStorage.setItem("notes", JSON.stringify(savedNotes));
+            displaySavedNotes();
+        }
+
+        function editNote(index) {
+            const savedNotes = JSON.parse(localStorage.getItem("notes")) || [];
+            const noteToEdit = savedNotes[index];
+            
+            document.getElementById("editNoteIndex").value = index;
+            document.getElementById("editMcn").value = noteToEdit.mcn;
+            document.getElementById("editTransactionId").value = noteToEdit.transactionId;
+            document.getElementById("editContactName").value = noteToEdit.contactName;
+            document.getElementById("editEmail").value = noteToEdit.email;
+            document.getElementById("editCallBackNumber").value = noteToEdit.callBackNumber;
+            document.getElementById("editPassphraseVerification").value = noteToEdit.passphraseVerification;
+            document.getElementById("editPassphraseVerified").value = noteToEdit.passphraseVerified;
+            document.getElementById("editPbx").value = noteToEdit.pbx;
+            document.getElementById("editSymptom").value = noteToEdit.symptom;
+            document.getElementById("editIssue").value = noteToEdit.issue;
+            document.getElementById("editResolution").value = noteToEdit.resolution;
+            document.getElementById("editTroubleshootingSteps").value = noteToEdit.troubleshootingSteps;
+
+            document.getElementById("editNoteModal").style.display = "block";
+        }
+
+        document.getElementById("editNoteForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            const index = document.getElementById("editNoteIndex").value;
+            const savedNotes = JSON.parse(localStorage.getItem("notes")) || [];
+            
+            savedNotes[index] = {
+                mcn: document.getElementById("editMcn").value,
+                transactionId: document.getElementById("editTransactionId").value,
+                contactName: document.getElementById("editContactName").value,
+                email: document.getElementById("editEmail").value,
+                callBackNumber: document.getElementById("editCallBackNumber").value,
+                passphraseVerification: document.getElementById("editPassphraseVerification").value,
+                passphraseVerified: document.getElementById("editPassphraseVerified").value,
+                pbx: document.getElementById("editPbx").value,
+                symptom: document.getElementById("editSymptom").value,
+                issue: document.getElementById("editIssue").value,
+                resolution: document.getElementById("editResolution").value,
+                troubleshootingSteps: document.getElementById("editTroubleshootingSteps").value,
+                timestamp: new Date().toLocaleString()
+            };
+
+            localStorage.setItem("notes", JSON.stringify(savedNotes));
+            displaySavedNotes();
+            document.getElementById("editNoteModal").style.display = "none";
+        });
+
+        // Close modal when clicking on <span> (x)
+        document.querySelector(".close").onclick = function() {
+            document.getElementById("editNoteModal").style.display = "none";
+        }
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            if (event.target == document.getElementById("editNoteModal")) {
+                document.getElementById("editNoteModal").style.display = "none";
+            }
+        }
+
+        function copyNoteToClipboard(index) {
+            const savedNotes = JSON.parse(localStorage.getItem("notes")) || [];
+            const note = savedNotes[index];
+            const noteText = `MCN or Case ID: ${note.mcn}
+Transaction ID: ${note.transactionId}
+Contact Name: ${note.contactName}
+Email Address: ${note.email}
+Call Back Number: ${note.callBackNumber}
+Security Passphrase Verification Needed: ${note.passphraseVerification}
+Security Passphrase Verified: ${note.passphraseVerified}
+PBX: ${note.pbx}
+Symptom: ${note.symptom}
+Issue: ${note.issue}
+Resolution: ${note.resolution}
+Troubleshooting Steps: ${note.troubleshootingSteps}`;
+
+            navigator.clipboard.writeText(noteText).then(() => {
+                alert("Note copied to clipboard!");
+            }, () => {
+                alert("Failed to copy note. Please try again.");
+            });
+        }
+
+        function resetForm() {
+            document.getElementById("notesForm").reset();
+        }
+
+        function resetT2Form() {
+            document.getElementById("t2Form").reset();
+        }
+
+        function deleteSelectedNotes() {
+            const checkboxes = document.querySelectorAll('.note-checkbox:checked');
+            const indicesToDelete = Array.from(checkboxes).map(checkbox => parseInt(checkbox.dataset.index)).sort((a, b) => b - a);
+            
+            const savedNotes = JSON.parse(localStorage.getItem("notes")) || [];
+            indicesToDelete.forEach(index => {
+                savedNotes.splice(index, 1);
+            });
+
+            localStorage.setItem("notes", JSON.stringify(savedNotes));
+            displaySavedNotes();
+        }
+
+        function showSelectedValue() {
+            var dropdown = document.getElementById("myDropdown");
+            var resultTextbox = document.getElementById("resultTextbox");
+            resultTextbox.value = dropdown.value;
+        }
+
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
+</body>
+
+</html>
