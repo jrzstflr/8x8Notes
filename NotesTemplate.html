@@ -455,14 +455,14 @@
         <div class="toggle-container">
             <label for="nightMode">Night Mode</label>
             <label class="toggle">
-                <input type="checkbox" id="nightMode" onclick="toggleNightMode()">
+                <input type="checkbox" id="nightMode" onclick="toggleNightMode()" aria-label="Toggle night mode">
                 <span class="slider"></span>
             </label>
         </div>
         <div class="digital-clock-container">
             <div class="digital-clock" id="digitalClock">00:00:00 AM</div>
         </div>
-        <select id="timezoneSelect" onchange="updateTimezone()">
+        <select id="timezoneSelect" onchange="updateTimezone()" aria-label="Select timezone">
             <option value="UTC">UTC</option>
             <option value="America/New_York">America/New_York</option>
             <option value="America/Los_Angeles">America/Los_Angeles</option>
@@ -483,6 +483,7 @@
         <span class="tab" onclick="switchTab('outboundTab')">Outbound</span>
         <span class="tab" onclick="switchTab('t2TemplateTab')">T2 Template</span>
         <span class="tab" onclick="switchTab('savedNotesTab')">Saved Notes</span>
+        <span class="tab" onclick="switchTab('emailsTab')">Email Templates</span>
     </div>
     <div id="outboundTab" class="tab-content">
         <form id="outboundForm" class="glass-container">
@@ -518,49 +519,12 @@
         </form>
     </div>
 
-    <script>
-        function switchTab(tabId) {
-            const tabs = document.querySelectorAll(".tab-content");
-            tabs.forEach(tab => {
-                tab.classList.remove("active");
-            });
-            document.getElementById(tabId).classList.add("active");
-
-            const tabButtons = document.querySelectorAll(".tab");
-            tabButtons.forEach(button => {
-                button.classList.remove("active");
-            });
-            const activeButton = Array.from(tabButtons).find(button => button.textContent === tabId.replace('Tab', ''));
-            activeButton.classList.add("active");
-        }
-
-        function copyOutboundData() {
-            const contactName = document.getElementById("outboundContactName").value;
-            const contactPhone = document.getElementById("outboundContactPhone").value;
-            const email = document.getElementById("outboundEmail").value;
-            const vccTransId = document.getElementById("vccTransId").value;
-            const update = document.getElementById("outboundUpdate").value;
-
-            const outboundData = `Contact Name called: ${contactName}\nContact Phone Number Dialed: ${contactPhone}\nContact Email Address: ${email}\nVCC Trans ID: ${vccTransId}\nUpdate/Troubleshooting: ${update}`;
-
-            navigator.clipboard.writeText(outboundData).then(() => {
-                alert("Outbound data copied to clipboard!");
-            }, () => {
-                alert("Failed to copy outbound data. Please try again.");
-            });
-        }
-
-        function resetOutboundForm() {
-            document.getElementById("outboundForm").reset();
-        }
-    </script>
-
     <div id="notesTab" class="tab-content active">
         <form id="notesForm" class="glass-container">
             <!-- Add Contact Directory dropdown -->
             <div class="input-container">
                 <label for="myDropdown"> </label>
-                <select id="myDropdown" onchange="showSelectedValue()">
+                <select id="myDropdown" onchange="showSelectedValue()" aria-label="Contact Directory">
                     <option value="">Contact Directory</option>
                     <option value="C4334410">Sales Master Case</option>
                     <option value="+44 207 096 6060">8x8 Support UK</option>
@@ -580,7 +544,7 @@
                 </select>
             </div>
             <div class="input-container">
-                <input type="text" id="resultTextbox" readonly>
+                <input type="text" id="resultTextbox" readonly aria-label="Selected contact information">
             </div>
 
             <div class="input-container">
@@ -612,7 +576,7 @@
                 <select id="passphraseVerification" name="Security Passphrase Verification Needed" required>
                     <option value="" disabled selected></option>
                     <option value="Yes">Yes</option>
-                    <option value="Yes">Yes w/ OTP</option>
+                    <option value="Yes w/ OTP">Yes w/ OTP</option>
                     <option value="No">No</option>
                     <option value="N/A">N/A</option>
                 </select>
@@ -623,7 +587,7 @@
                 <select id="passphraseVerified" name="Security Passphrase Verified" required>
                     <option value="" disabled selected></option>
                     <option value="Yes">Yes</option>
-                    <option value="Yes">Yes w/ OTP</option>
+                    <option value="Yes w/ OTP">Yes w/ OTP</option>
                     <option value="No">No</option>
                     <option value="N/A">N/A</option>
                 </select>
@@ -649,12 +613,16 @@
                 <input type="text" id="resolution" name="Resolution" placeholder=" " required>
                 <label for="resolution">Resolution</label>
             </div>
-
+            <div class="input-container">
+                <input type="datetime-local" id="nudDatetime" placeholder=" " required>
+                <label for="nudDatetime" title="Specify the next update date and time in the format YYYY-MM-DDTHH:MM">NUD:</label>
+            </div>
+            
             <div class="input-container">
                 <textarea id="troubleshootingSteps" name="Troubleshooting Steps" rows="5" placeholder=" " required></textarea>
                 <label for="troubleshootingSteps">Troubleshooting Steps</label>
             </div>
-
+            
             <div class="button-container">
                 <button type="button" onclick="copyNote()">Copy</button>
                 <button type="button" onclick="resetForm()">Reset Form</button>
@@ -749,7 +717,7 @@
         <div id="savedNotes"></div>
 
         <h2>Search Saved Notes</h2>
-        <input type="text" id="searchInput" placeholder="Search notes..." oninput="searchNotes()">
+        <input type="text" id="searchInput" placeholder="Search notes..." oninput="searchNotes()" aria-label="Search saved notes">
         <div id="searchResults"></div>
     </div>
 
@@ -783,6 +751,7 @@
                     <select id="editPassphraseVerification" required>
                         <option value="" disabled selected></option>
                         <option value="Yes">Yes</option>
+                        <option value="Yes w/ OTP">Yes w/ OTP</option>
                         <option value="No">No</option>
                         <option value="N/A">N/A</option>
                     </select>
@@ -792,6 +761,7 @@
                     <select id="editPassphraseVerified" required>
                         <option value="" disabled selected></option>
                         <option value="Yes">Yes</option>
+                        <option value="Yes w/ OTP">Yes w/ OTP</option>
                         <option value="No">No</option>
                         <option value="N/A">N/A</option>
                     </select>
@@ -813,6 +783,11 @@
                     <input type="text" id="editResolution" placeholder=" " required>
                     <label for="editResolution">Resolution</label>
                 </div>
+                <!-- Added NUD field to edit form -->
+                <div class="input-container">
+                    <input type="datetime-local" id="editNudDatetime" placeholder=" ">
+                    <label for="editNudDatetime" title="Specify the next update date and time in the format YYYY-MM-DDTHH:MM">NUD:</label>
+                </div>
                 <div class="input-container">
                     <textarea id="editTroubleshootingSteps" rows="5" placeholder=" " required></textarea>
                     <label for="editTroubleshootingSteps">Troubleshooting Steps</label>
@@ -822,7 +797,170 @@
         </div>
     </div>
 
+    <div id="emailsTab" class="tab-content">
+        <h2>Email Templates</h2>
+        <ul id="emailList">
+          <li><button onclick="showTemplate('template1')">Acknowledgement Email</button></li>
+          <li><button onclick="showTemplate('template2')">Voicemail Email</button></li>
+          <li><button onclick="showTemplate('template3')">Limitation/Feature Request Email</button></li>
+          <li><button onclick="showTemplate('template4')">Primary Admin Change Email Instructions</button></li>
+          <li><button onclick="showTemplate('template5')">Day 10 - 3 Strike no response Resolved E-mail</button></li>
+        </ul>
+    </div>
+          
+    <!-- MODAL -->
+    <div id="emailModal" class="modal">
+        <div class="modal-content">
+          <span class="close" onclick="closeModal()">&times;</span>
+          <pre id="templateContent" class="email-body"></pre>
+          <button onclick="copyTemplate()">Copy</button>
+        </div>
+    </div>
+          
+    <!-- STYLES -->
+    <style>
+        .tab-content ul {
+          list-style: none;
+          padding: 0;
+        }
+      
+        .tab-content li button {
+          display: block;
+          width: 100%;
+          padding: 10px;
+          margin: 5px 0;
+          font-size: 16px;
+          cursor: pointer;
+        }
+      
+        .modal {
+          visibility: hidden;
+          opacity: 0;
+          position: fixed;
+          z-index: 1000;
+          left: 0; top: 0;
+          width: 100%; height: 100%;
+          background-color: rgba(0, 0, 0, 0.7);
+          transition: visibility 0.3s, opacity 0.3s;
+        }
+      
+        .modal.show {
+          visibility: visible;
+          opacity: 1;
+        }
+      
+        .modal-content {
+          background-color: white;
+          margin: 10% auto;
+          padding: 20px;
+          width: 80%;
+          max-width: 600px;
+          border-radius: 8px;
+          position: relative;
+        }
+      
+        .close {
+          position: absolute;
+          top: 10px; right: 15px;
+          font-size: 24px;
+          cursor: pointer;
+        }
+      
+        .email-body {
+          white-space: pre-wrap;
+          font-family: Arial, sans-serif;
+          background: #f9f9f9;
+          padding: 10px;
+          margin-bottom: 10px;
+          border: 1px solid #ccc;
+          max-height: 300px;
+          overflow-y: auto;
+        }
+    </style>
+          
+    <!-- SCRIPT -->
     <script>
+        const templates = {
+          template1: `Thank you for reaching out to us. I have received your reported case and I am currently reviewing the details. I am now working on it, and I will contact you shortly with an update.
+      
+In the event of any delays in my callback, I will send you another email to keep you informed of the progress. In the meantime, if you experience any additional issues or need further assistance, please feel free to reply to this email, and I will be happy to assist you.
+      
+We appreciate your patience and understanding.`,
+      
+          template2: `We have just attempted to call you on [telephone number] and left you a Voice Mail. [DELETE if no VM]
+      
+We would love the opportunity to resolve your case soon so please let us know if there is an alternative telephone number we could reach you at and when you would prefer us to try calling again in order to assist with your inquiry.
+      
+Looking forward to your reply.`,
+      
+          template3: `I hope this message finds you well.
+      
+As we confirmed that this feature does not currently exist in 8x8, I took the initiative to create an internal ticket (JIRA Ticket Reference #) regarding the feature "NAME OF THE FEATURE". This ticket has been forwarded to our Development Team for their review.
+      
+ While we cannot guarantee immediate changes, please rest assured that your request will be considered for future updates. We are continually seeking ways to enhance our services.
+      
+We are closing this case. In case you need further assistance, please reopen this case within 14 days so we can call you and assist. Thank you for being an 8x8 customer!
+      
+Thank you for your understanding and support.`,
+      
+          template4: `I hope this email finds you well. To ensure a smooth transition of your 8x8 account's Primary Admin, please carefully follow the steps outlined below using the Primary Admin Change Request Form. This process will legally authorize the transfer of admin and billing responsibilities without requiring a full system recreation.
+      
+Steps to Complete the Primary Admin Change Request:
+      
+1. Download the Template - Please find the attached form in this email.
+2. Create the Document on Your Company Letterhead 
+         Important: Do not fill out the example form directly. You must create a new document using your company's official letterhead.
+3. Ensure the New Admin Has a Profile in the Admin Console - Before proceeding, confirm that the new admin already has an active profile created in the 8x8 Admin Console.
+4. Obtain Signatures - The letter must be signed by the Requester and Approver and include their Title.
+5. Submit the Signed Document - Once complete, submit the document by replying to this email together with the attachment.
+      
+What to Expect Next?
+After submission, an 8x8 Support Agent will reach out within 24 hours to finalize the transfer.
+Important: Following these steps is essential to avoid any delays in the transfer process.
+      
+If you have any questions or need further assistance, please don't hesitate to reach out.`,
+      
+          template5: `We have been attempting to contact you over the past few days to assist with your case, but unfortunately, we have been unable to reach you via email or phone.
+      
+We remain committed to resolving your case; however, since we have not been able to establish contact, we will proceed with closing this case for now. Please feel free to reopen it at your convenience when you are available.
+      
+Kindly note that if more than 14 days have passed since the ticket was marked as resolved, you will need to raise a new ticket to revisit the matter.`
+        };
+      
+        function showTemplate(templateKey) {
+          const content = templates[templateKey];
+          document.getElementById('templateContent').textContent = content;
+          document.getElementById('emailModal').classList.add('show');
+        }
+      
+        function copyTemplate() {
+          const content = document.getElementById('templateContent').textContent;
+          navigator.clipboard.writeText(content).then(() => {
+            alert('Email template copied to clipboard!');
+          }).catch(err => {
+            alert('Failed to copy email template. Please try again.');
+            console.error('Error copying text: ', err);
+          });
+        }
+      
+        function closeModal() {
+          document.getElementById('emailModal').classList.remove('show');
+        }
+      
+        // Unified window click handler for all modals
+        window.onclick = function(event) {
+          const editModal = document.getElementById("editNoteModal");
+          const emailModal = document.getElementById("emailModal");
+          
+          if (editModal.style.display === "block" && event.target == editModal) {
+            editModal.style.display = "none";
+          }
+          
+          if (emailModal.classList.contains("show") && event.target == emailModal) {
+            emailModal.classList.remove("show");
+          }
+        };
+
         let currentTimezone = 'UTC';
 
         function toggleNightMode() {
@@ -830,20 +968,33 @@
         }
 
         function switchTab(tabId) {
+            // Hide all tab contents
             const tabs = document.querySelectorAll(".tab-content");
             tabs.forEach(tab => {
                 tab.classList.remove("active");
             });
+            
+            // Show selected tab content
             const selectedTab = document.getElementById(tabId);
             selectedTab.classList.add("active");
 
+            // Update tab button active state
             const tabButtons = document.querySelectorAll(".tab");
             tabButtons.forEach(button => {
                 button.classList.remove("active");
             });
-            const activeButton = Array.from(tabButtons).find(button => button.textContent === tabId.replace('Tab', ''));
-            activeButton.classList.add("active");
+            
+            // Find the button that corresponds to this tab and make it active
+            const activeButton = Array.from(tabButtons).find(button => {
+                const onclickAttr = button.getAttribute('onclick');
+                return onclickAttr && onclickAttr.includes(`'${tabId}'`);
+            });
+            
+            if (activeButton) {
+                activeButton.classList.add("active");
+            }
 
+            // Load content for specific tabs if needed
             if (tabId === 'savedNotesTab') {
                 displaySavedNotes();
             }
@@ -861,6 +1012,7 @@
             const symptom = document.getElementById("symptom").value;
             const issue = document.getElementById("issue").value;
             const resolution = document.getElementById("resolution").value;
+            const nudDatetime = document.getElementById("nudDatetime").value;
             const troubleshootingSteps = document.getElementById("troubleshootingSteps").value;
 
             if (mcn) {
@@ -876,6 +1028,7 @@
                     symptom,
                     issue,
                     resolution,
+                    nudDatetime,
                     troubleshootingSteps,
                     timestamp: new Date().toLocaleString()
                 };
@@ -901,7 +1054,9 @@ Security Passphrase Verified: ${passphraseVerified}
 PBX: ${pbx}
 Symptom: ${symptom}
 Issue: ${issue}
+NUD: ${nudDatetime}
 Resolution: ${resolution}
+
 Troubleshooting Steps: ${troubleshootingSteps}`;
 
                 navigator.clipboard.writeText(noteText).then(() => {
@@ -912,6 +1067,26 @@ Troubleshooting Steps: ${troubleshootingSteps}`;
 
                 displaySavedNotes();
             }
+        }
+
+        function copyOutboundData() {
+            const contactName = document.getElementById("outboundContactName").value;
+            const contactPhone = document.getElementById("outboundContactPhone").value;
+            const email = document.getElementById("outboundEmail").value;
+            const vccTransId = document.getElementById("vccTransId").value;
+            const update = document.getElementById("outboundUpdate").value;
+
+            const outboundData = `Contact Name called: ${contactName}\nContact Phone Number Dialed: ${contactPhone}\nContact Email Address: ${email}\nVCC Trans ID: ${vccTransId}\nUpdate/Troubleshooting: ${update}`;
+
+            navigator.clipboard.writeText(outboundData).then(() => {
+                alert("Outbound data copied to clipboard!");
+            }, () => {
+                alert("Failed to copy outbound data. Please try again.");
+            });
+        }
+
+        function resetOutboundForm() {
+            document.getElementById("outboundForm").reset();
         }
 
         function copyT2() {
@@ -1034,6 +1209,7 @@ Login Info (UID)(For VO Mobile, Desktop, or Online issues): ${loginInfo}`;
             document.getElementById("editSymptom").value = noteToEdit.symptom;
             document.getElementById("editIssue").value = noteToEdit.issue;
             document.getElementById("editResolution").value = noteToEdit.resolution;
+            document.getElementById("editNudDatetime").value = noteToEdit.nudDatetime || "";
             document.getElementById("editTroubleshootingSteps").value = noteToEdit.troubleshootingSteps;
 
             document.getElementById("editNoteModal").style.display = "block";
@@ -1056,6 +1232,7 @@ Login Info (UID)(For VO Mobile, Desktop, or Online issues): ${loginInfo}`;
                 symptom: document.getElementById("editSymptom").value,
                 issue: document.getElementById("editIssue").value,
                 resolution: document.getElementById("editResolution").value,
+                nudDatetime: document.getElementById("editNudDatetime").value,
                 troubleshootingSteps: document.getElementById("editTroubleshootingSteps").value,
                 timestamp: new Date().toLocaleString()
             };
@@ -1068,13 +1245,6 @@ Login Info (UID)(For VO Mobile, Desktop, or Online issues): ${loginInfo}`;
         // Close modal when clicking on <span> (x)
         document.querySelector(".close").onclick = function() {
             document.getElementById("editNoteModal").style.display = "none";
-        }
-
-        // Close modal when clicking outside of it
-        window.onclick = function(event) {
-            if (event.target == document.getElementById("editNoteModal")) {
-                document.getElementById("editNoteModal").style.display = "none";
-            }
         }
 
         function copyNoteToClipboard(index) {
@@ -1090,6 +1260,7 @@ Security Passphrase Verified: ${note.passphraseVerified}
 PBX: ${note.pbx}
 Symptom: ${note.symptom}
 Issue: ${note.issue}
+NUD: ${note.nudDatetime || ""}
 Resolution: ${note.resolution}
 Troubleshooting Steps: ${note.troubleshootingSteps}`;
 
